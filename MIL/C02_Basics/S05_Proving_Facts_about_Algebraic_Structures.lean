@@ -150,15 +150,25 @@ variable (a b c : R)
 
 #check (mul_nonneg : 0 ≤ a → 0 ≤ b → 0 ≤ a * b)
 
-example (h : a ≤ b) : 0 ≤ b - a := by
-  sorry
+theorem thing1 (h : a ≤ b) : 0 ≤ b - a := by
+  rw [sub_eq_add_neg]
+  rw [← sub_self a]
+  rw [sub_eq_add_neg]
+  rw [add_comm]
+  rw [add_comm b]
+  apply add_le_add_left h
 
-example (h: 0 ≤ b - a) : a ≤ b := by
-  sorry
+theorem thing2 (h: 0 ≤ b - a) : a ≤ b := by
+  rw [← add_zero a, ← add_sub_cancel_left a b, add_sub_assoc]
+  apply add_le_add_left h
 
-example (h : a ≤ b) (h' : 0 ≤ c) : a * c ≤ b * c := by
-  sorry
-
+theorem thing3 (h : a ≤ b) (h' : 0 ≤ c) : a * c ≤ b * c := by
+  apply thing2
+  rw [← sub_mul]
+  apply mul_nonneg
+  apply thing1
+  exact h
+  exact h'
 end
 
 section
@@ -170,6 +180,17 @@ variable (x y z : X)
 #check (dist_triangle x y z : dist x z ≤ dist x y + dist y z)
 
 example (x y : X) : 0 ≤ dist x y := by
-  sorry
+  apply nonneg_of_mul_nonneg_left
+  rw [mul_two]
+  nth_rw 2 [dist_comm x y]
+  rw [← dist_self x]
+  exact dist_triangle x y x
+  norm_num
 
 end
+
+-- Direct proof of 0 < 2
+def h := Mathlib.Meta.NormNum.isNat_lt_true
+  (Mathlib.Meta.NormNum.isNat_ofNat ℕ (Eq.refl 0))
+  (Mathlib.Meta.NormNum.isNat_ofNat ℕ (Eq.refl 2))
+  (Eq.refl false)
