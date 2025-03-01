@@ -7,8 +7,13 @@ namespace C03S01
 
 #check ∀ x y ε : ℝ, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε
 
-theorem my_lemma : ∀ x y ε : ℝ, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε :=
-  sorry
+theorem my_lemma : ∀ x y ε : ℝ, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
+  intro x y ε epos ele1 xlt ylt
+  calc
+    |x * y| = |x| * |y| := abs_mul x y
+    _ ≤ |x| * ε := mul_le_mul (le_refl |x|) (le_of_lt ylt) (abs_nonneg y) (abs_nonneg x)
+    _ < 1 * ε := (mul_lt_mul_right epos).mpr (lt_of_lt_of_le xlt ele1)
+    _ = ε := one_mul ε
 
 section
 variable (a b δ : ℝ)
@@ -21,8 +26,13 @@ variable (ha : |a| < δ) (hb : |b| < δ)
 
 end
 
-theorem my_lemma2 : ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε :=
-  sorry
+theorem my_lemma2 : ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
+  intro x y ε epos ele1 xlt ylt
+  calc
+    |x * y| = |x| * |y| := abs_mul x y
+    _ ≤ |x| * ε := mul_le_mul (le_refl |x|) (le_of_lt ylt) (abs_nonneg y) (abs_nonneg x)
+    _ < 1 * ε := (mul_lt_mul_right epos).mpr (lt_of_lt_of_le xlt ele1)
+    _ = ε := one_mul ε
 
 section
 variable (a b δ : ℝ)
@@ -36,7 +46,11 @@ end
 theorem my_lemma3 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
   intro x y ε epos ele1 xlt ylt
-  sorry
+  calc
+    |x * y| = |x| * |y| := abs_mul x y
+    _ ≤ |x| * ε := mul_le_mul (le_refl |x|) (le_of_lt ylt) (abs_nonneg y) (abs_nonneg x)
+    _ < 1 * ε := (mul_lt_mul_right epos).mpr (lt_of_lt_of_le xlt ele1)
+    _ = ε := one_mul ε
 
 theorem my_lemma4 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
@@ -188,12 +202,16 @@ example (c : ℝ) : Injective fun x ↦ x + c := by
   exact (add_left_inj c).mp h'
 
 example {c : ℝ} (h : c ≠ 0) : Injective fun x ↦ c * x := by
-  sorry
+  intro x₁ x₂ h'
+  exact (mul_right_inj' h).mp h'
 
 variable {α : Type*} {β : Type*} {γ : Type*}
 variable {g : β → γ} {f : α → β}
 
 example (injg : Injective g) (injf : Injective f) : Injective fun x ↦ g (f x) := by
-  sorry
+  intro x y gfe
+  apply injf
+  apply injg
+  exact gfe
 
 end
